@@ -313,6 +313,9 @@ int JAL (int Rd, int Imm){ // jump and link
   return 0;
 };
 
-int ECALL (char* i_){return 0;}
+int ECALL (int Rd, int Rs1, int Imm){
+  RUN_BIT = CURRENT_STATE.REGS[Imm];
+  return 0;
+}
 
 #endif
