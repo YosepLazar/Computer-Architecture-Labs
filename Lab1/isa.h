@@ -58,22 +58,22 @@ int LB (int Rd, int Rs1, int Imm){ // Load Byte
 };
 
 int LH (int Rd, int Rs1, int Imm){ // load half
-  NEXT_STATE.REGS[Rd] = CURRENT_STATE.REGS[Rs1] + SIGNEXT(Imm_Rs1,16);
+  NEXT_STATE.REGS[Rd] = CURRENT_STATE.REGS[Rs1] + SIGNEXT(Imm,16);
   return 0;
 };
 
 int LW (int Rd, int Rs1, int Imm){ // load word
-  NEXT_STATE.REGS[Rd] = CURRENT_STATE.REGS[Rs1] + SIGNEXT(Imm_Rs1, 32);
+  NEXT_STATE.REGS[Rd] = CURRENT_STATE.REGS[Rs1] + SIGNEXT(Imm,32);
   return 0;
 };
 
 int LBU (int Rd, int Rs1, int Imm){ // load byte unsigned
-  NEXT_STATE.REGS[Rd] = (unsigned int)CURRENT_STATE.REGS[Rs1] + (unsigned int)SIGNEXT(Imm_Rs1, 8);
+  NEXT_STATE.REGS[Rd] = (unsigned int)CURRENT_STATE.REGS[Rs1] + (unsigned int)SIGNEXT(Imm,8);
   return 0;
 };
 
 int LHU (int Rd, int Rs1, int Imm){ // load halfword unigned
-  NEXT_STATE.REGS[Rd] = (unsigned int)CURRENT_STATE.REGS[Rs1] + (unsigned int)SIGNEXT(Imm_Rs1, 16);
+  NEXT_STATE.REGS[Rd] = (unsigned int)CURRENT_STATE.REGS[Rs1] + (unsigned int)SIGNEXT(Imm,16);
   return 0;
 };
 
@@ -135,11 +135,11 @@ int ANDI (int Rd, int Rs1, int Imm){
 
 // U Instruction
 int AUIPC (int Rd, int upImm){ // add upper immediate to PC
-
+  NEXT_STATE.REGS[Rd] = CURRENT_STATE.REGS[upImm] + CURRENT_STATE.PC;
 };
 
-int LUI (char* i_){ // load upper immediate
-
+int LUI (int Rd, int upImm){ // load upper immediate
+  NEXT_STATE.REGS[Rd] = CURRENT_STATE.REGS[upImm];
 };
 
 // S Instruction
@@ -193,61 +193,61 @@ int SW (int Rs2, int Imm_Rs1){ // store word
 };
 
 // R instruction
-int SUB (int Rd, int Rs1, int Rs2, int Funct3){
+int SUB (int Rd, int Rs1, int Rs2){
   int cur = 0;
   cur = CURRENT_STATE.REGS[Rs1] - CURRENT_STATE.REGS[Rs2];
   NEXT_STATE.REGS[Rd] = cur;
   return 0;
 };
-int SLL (int Rd, int Rs1, int Rs2, int Funct3){ // Shift left logical
+int SLL (int Rd, int Rs1, int Rs2){ // Shift left logical
   int cur = 0;
   cur = CURRENT_STATE.REGS[Rs1] << CURRENT_STATE.REGS[Rs2];
   NEXT_STATE.REGS[Rd] = cur;
   return 0;
 };
 
-int SLT (int Rd, int Rs1, int Rs2, int Funct3){ // set less than
+int SLT (int Rd, int Rs1, int Rs2){ // set less than
   int cur = 0;
   cur = CURRENT_STATE.REGS[Rs1] < CURRENT_STATE.REGS[Rs2];
   NEXT_STATE.REGS[Rd] = cur;
   return 0;
 };
 
-int SLTU (int Rd, int Rs1, int Rs2, int Funct3){ // set less than
+int SLTU (int Rd, int Rs1, int Rs2){ // set less than
   int cur = 0;
   cur = abs(CURRENT_STATE.REGS[Rs1]) < abs(CURRENT_STATE.REGS[Rs2]);
   NEXT_STATE.REGS[Rd] = cur;
   return 0;
 };
 
-int XOR (int Rd, int Rs1, int Rs2, int Funct3){ // XOR gate
+int XOR (int Rd, int Rs1, int Rs2){ // XOR gate
   int cur = 0;
   cur = (unsigned int)CURRENT_STATE.REGS[Rs1] ^ (unsigned int)CURRENT_STATE.REGS[Rs2];
   NEXT_STATE.REGS[Rd] = cur;
   return 0;
 };
 
-int SRL (int Rd, int Rs1, int Rs2, int Funct3){ // right shift logical
+int SRL (int Rd, int Rs1, int Rs2){ // right shift logical
   int cur = 0;
   cur = (unsigned int)CURRENT_STATE.REGS[Rs1] >> (unsigned int)CURRENT_STATE.REGS[Rs2];
   NEXT_STATE.REGS[Rd] = cur;
   return 0;
 };
 
-int SRA (int Rd, int Rs1, int Rs2, int Funct3){ // right shift arithmetic
+int SRA (int Rd, int Rs1, int Rs2){ // right shift arithmetic
   int cur = 0;
   cur = CURRENT_STATE.REGS[Rs1] >> CURRENT_STATE.REGS[Rs2];
   NEXT_STATE.REGS[Rd] = cur;
   return 0;
 };
 
-int OR (int Rd, int Rs1, int Rs2, int Funct3){ // OR gate
+int OR (int Rd, int Rs1, int Rs2){ // OR gate
   int cur = 0;
   cur = CURRENT_STATE.REGS[Rs1] | CURRENT_STATE.REGS[Rs2];
   NEXT_STATE.REGS[Rd] = cur;
   return 0;
 };
-int AND (int Rd, int Rs1, int Rs2, int Funct3){ // AND gate
+int AND (int Rd, int Rs1, int Rs2){ // AND gate
   int cur = 0;
   cur = CURRENT_STATE.REGS[Rs1] & CURRENT_STATE.REGS[Rs2];
   NEXT_STATE.REGS[Rd] = cur;
@@ -255,7 +255,7 @@ int AND (int Rd, int Rs1, int Rs2, int Funct3){ // AND gate
 };
 
 // B instructions
-int BEQ (int Rs1, int Rs2, int Imm, int Funct3){ // branch if =
+int BEQ (int Rs1, int Rs2, int Imm){ // branch if =
 
   int cur = 0;
   Imm = Imm << 1;
@@ -264,7 +264,7 @@ int BEQ (int Rs1, int Rs2, int Imm, int Funct3){ // branch if =
   return 0;
 
 };
-int BLT (int Rs1, int Rs2, int Imm, int Funct3){ // branch if <
+int BLT (int Rs1, int Rs2, int Imm){ // branch if <
 
   int cur = 0;
   Imm = Imm << 1;
@@ -273,7 +273,7 @@ int BLT (int Rs1, int Rs2, int Imm, int Funct3){ // branch if <
   return 0;
 
 };
-int BGE (int Rs1, int Rs2, int Imm, int Funct3){ // branch if >=
+int BGE (int Rs1, int Rs2, int Imm){ // branch if >=
 
   int cur = 0;
   Imm = Imm << 1;
@@ -282,7 +282,7 @@ int BGE (int Rs1, int Rs2, int Imm, int Funct3){ // branch if >=
   return 0;
 
 };
-int BLTU (int Rs1, int Rs2, int Imm, int Funct3){ // branch if < unsigned;
+int BLTU (int Rs1, int Rs2, int Imm){ // branch if < unsigned;
 
   int cur = 0;
   Imm = Imm << 1;
@@ -290,7 +290,7 @@ int BLTU (int Rs1, int Rs2, int Imm, int Funct3){ // branch if < unsigned;
     NEXT_STATE.PC = (CURRENT_STATE.PC - 4) + (SIGNEXT(Imm,13));
   return 0;
 };
-int BGEU (int Rs1, int Rs2, int Imm, int Funct3){ // branch if >= unsigned;
+int BGEU (int Rs1, int Rs2, int Imm){ // branch if >= unsigned;
 
   int cur = 0;
   Imm = Imm << 1;
@@ -301,12 +301,15 @@ int BGEU (int Rs1, int Rs2, int Imm, int Funct3){ // branch if >= unsigned;
 
 // I instruction
 int JALR (int Rd, int Rs1, int Imm){ // jump and link register
-
+  NEXT_STATE.PC = CURRENT_STATE.REGS[Rs1] + (SIGNEXT(Imm,12));
+  NEXT_STATE.REGS[Rd] = CURRENT_STATE.PC + 4;
+  return 0;
 };
 
 // J instruction
-int JAL (int Rd, int Funct3){ // jump and link
-
+int JAL (int Rd, int Imm){ // jump and link
+  NEXT_STATE.PC = CURRENT_STATE.REGS[Imm];
+  NEXT_STATE.REGS[Rd] = CURRENT_STATE.PC + 4;
   return 0;
 };
 
